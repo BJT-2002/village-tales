@@ -7,7 +7,7 @@
 ## 🎮 在线体验
 
 1. 🌐 **在线体验**：直接访问 [https://bjt-2002.github.io/village-tales/](https://bjt-2002.github.io/village-tales/) （GitHub Pages 托管，人人可访问）
-2. 📂 本地运行：仓库 clone 后双击 `index.html` 即可本地打开（推荐，性能更好）。
+2. 📂 本地运行：仓库 clone 后双击 `index.html` 即可运行，无需安装任何依赖、无需启动本地服务（推荐，响应更流畅）。
 3. 首次进入需要在封面的 **API Key** 按钮填入自己的 OpenAI 兼容 Key（以及可选的自定义地址/模型）。Key 保存在玩家本地 `localStorage`，**不会上传到任何服务器，仓库源码内也未内置任何 Key**。
 
 ***
@@ -46,15 +46,15 @@
 ```
 
 > 为什么代码全放在一个 `index.html`？
-> 作品集项目讲究 **"下载解压双击就能运行"**。零构建步骤、零 `npm install`、零网络依赖（除了调用 LLM API 本身），HR / 面试官 10 秒内即可进入游戏。
+> 作品集讲究 **"下载解压双击就能运行"**。无需构建步骤、无需 `npm install`，面试官 10 秒内即可进入游戏，操作成本降到最低。
 
 ***
 
 ## 🛠️ 技术栈
 
-- **原生 HTML5 / CSS3 / ES6+** — 无构建工具、无框架、零依赖
+- **原生 HTML5 / CSS3 / ES6+ 单文件应用** — 不借助框架、构建工具、脚手架，独立完成完整交互闭环，体现前端基础功
 - **CSS3 Animation** — 简介页淡入、游戏介绍浮起、决断结果滑出、最终推演段落淡入
-- **Web Audio / <audio>** — BGM 循环播放 + 捕获阶段首次点击自动解锁（解决浏览器自动播放策略）
+- **Web Audio / `<audio>`** — BGM 循环播放 + 捕获阶段首次点击自动解锁（解决浏览器自动播放策略）
 - **`localStorage`** — API Key 存储 + 6 坑位存档系统
 - **LLM API（OpenAI 兼容协议）** — 可自定义 API 地址 + 模型名
   - 角色询问：返回 `{main: {speaker, content}, interrupts: [{speaker, content}]}` 结构
