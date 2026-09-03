@@ -126,8 +126,6 @@ function showScreen(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   const el = $('screen-'+id);
   el.classList.add('active');
-  // 封面页：保证 BGM 播放
-  if(id === 'cover') playBGM();
   // 简介浮现动画
   if(id === 'intro'){
     const t = $('intro-click');
@@ -924,12 +922,6 @@ function layoutCoverBtns(){
 window.addEventListener('load', layoutCoverBtns);
 window.addEventListener('resize', layoutCoverBtns);
 /* ============ BGM 控制 ============ */
-function playBGM(){
-  const bgm = $('bgm');
-  if(!bgm || bgm.muted) return;
-  const p = bgm.play();
-  if(p && p.catch) p.catch(()=>{});
-}
 function initBGM(){
   const bgm = $('bgm');
   const btn = $('btn-bgm');
@@ -953,27 +945,23 @@ function initBGM(){
   btn.onclick = ()=>{
     bgm.muted = !bgm.muted;
     updateBgmBtn();
-    if(!bgm.muted) playBGM();
-  };
-  // 持久监听：任何用户交互（点击/按键/触摸）都尝试播放，
-  // 直到 BGM 真正进入 playing 状态后自动停止监听
-  let locked = true;
-  function unlock(){
-    playBGM();
-    setTimeout(()=>{
-      if(!bgm.paused) locked = false;
-    }, 200);
-    if(!locked){
-      document.removeEventListener('click', unlock, true);
-      document.removeEventListener('keydown', unlock, true);
-      document.removeEventListener('touchstart', unlock, true);
+    if(!bgm.muted){
+      // 尝试播放（处理浏览器自动播放限制）
+      const p = bgm.play();
+      if(p && p.catch) p.catch(()=>{});
     }
+  };
+  // 用户首次交互后尝试播放（浏览器自动播放限制）
+  function tryPlay(){
+    if(bgm.muted) return;
+    const p = bgm.play();
+    if(p && p.catch) p.catch(()=>{});
   }
-  document.addEventListener('click', unlock, true);
-  document.addEventListener('keydown', unlock, true);
-  document.addEventListener('touchstart', unlock, true);
+  const onFirst = ()=>{ tryPlay(); document.removeEventListener('click', onFirst, true); document.removeEventListener('keydown', onFirst, true); };
+  document.addEventListener('click', onFirst, true);
+  document.addEventListener('keydown', onFirst, true);
   // 页面加载后立刻尝试（如果策略允许）
-  playBGM();
+  tryPlay();
 }
 
 document.addEventListener('DOMContentLoaded', ()=>{
