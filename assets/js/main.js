@@ -101,6 +101,10 @@ const INTRO_TEXT = `在森林与群山之间，有一座与世隔绝的村庄，
 可能让村庄繁荣，也可能留下新的矛盾，村庄会根据你的决断走向不同的未来。`;
 
 /* ============ 状态 ============ */
+// 支持 ?reset=1 强制清除旧设置，从头开始填写 API Key
+if (new URLSearchParams(location.search).get('reset') === '1') {
+  ['apiKey', 'apiBase', 'apiModel'].forEach(k => localStorage.removeItem(k));
+}
 const state = {
   apiKey: localStorage.getItem('apiKey') || '',
   apiBase: localStorage.getItem('apiBase') || 'https://api.deepseek.com',
@@ -217,8 +221,9 @@ ${targetTag}
   try{
     const obj = JSON.parse(jsonStr);
     const result = [];
-    if(obj.main && obj.main.speaker && obj.main.content){
-      result.push({speaker: obj.main.speaker, content: obj.main.content});
+    if(obj.main && obj.main.content){
+      // 强制主回答归属为当前被询问对象，防止模型把 speaker 写成别人
+      result.push({speaker: ch.name, content: obj.main.content});
     }else{
       // 兜底：把原始整段当做主要回答
       result.push({speaker: ch.name, content: raw});
@@ -965,4 +970,6 @@ document.addEventListener('DOMContentLoaded', ()=>{
 });
 
 // 初始化
-if(state.apiKey){ /* 保持封面 */ }
+if(new URLSearchParams(location.search).get('reset') === '1' || !state.apiKey){
+  showScreen('api');
+}
